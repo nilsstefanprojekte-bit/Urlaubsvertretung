@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Nutzer:innen · Urlaubsplanung{% endblock %}
+{% block content %}
+<header class="page-head">
+  <h1>Nutzer:innen verwalten</h1>
+  <p class="hint">Hier legst du die Personen an, die sich anmelden und als Vertretung gewählt werden können.</p>
+</header>
+
+<section class="card">
+  <h2>Neue:r Nutzer:in anlegen</h2>
+  <form method="post" class="vacation-form">
+    <div class="field">
+      <label for="name">Name</label>
+      <input id="name" name="name" type="text" required>
+    </div>
+    <div class="field">
+      <label for="email">E-Mail</label>
+      <input id="email" name="email" type="email" required>
+    </div>
+    <div class="field">
+      <label for="team">Team / Abteilung</label>
+      <input id="team" name="team" type="text">
+    </div>
+    <div class="field">
+      <label for="password">Passwort (mind. 8 Zeichen)</label>
+      <input id="password" name="password" type="password" minlength="8" required>
+    </div>
+    <div class="field grow">
+      <label class="checkbox"><input type="checkbox" name="is_admin"> Administrator:in</label>
+    </div>
+    <button type="submit">Anlegen</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Angelegte Nutzer:innen</h2>
+  <table>
+    <thead>
+      <tr><th>Name</th><th>E-Mail</th><th>Team</th><th>Rolle</th></tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>{{ user['name'] }}</td>
+        <td>{{ user['email'] }}</td>
+        <td>{{ user['team'] or '–' }}</td>
+        <td>{{ 'Admin' if user['is_admin'] else 'Nutzer:in' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

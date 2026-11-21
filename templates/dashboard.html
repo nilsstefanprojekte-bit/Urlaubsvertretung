@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Urlaub planen · Urlaubsplanung{% endblock %}
+{% block content %}
+<header class="page-head">
+  <h1>Hallo {{ me['name'] }} &#128075;</h1>
+  <p class="hint">Trag deinen Urlaub ein und wähle, wer dich vertritt.</p>
+</header>
+
+<section class="card">
+  <h2>Urlaub eintragen</h2>
+  <form method="post" class="vacation-form">
+    <div class="field">
+      <label for="date_from">Von</label>
+      <input id="date_from" name="date_from" type="date" value="{{ date_from or today }}" required>
+    </div>
+    <div class="field">
+      <label for="date_to">Bis</label>
+      <input id="date_to" name="date_to" type="date" value="{{ date_to or '' }}" required>
+    </div>
+    <div class="field">
+      <label for="substitute_id">Wer ist deine Vertretung?</label>
+      <select id="substitute_id" name="substitute_id" required>
+        <option value="" disabled selected>Vertretung wählen …</option>
+        {% for colleague in colleagues %}
+          <option value="{{ colleague['id'] }}" {% if selected_substitute == colleague['id'] %}selected{% endif %}>
+            {{ colleague['name'] }}{% if colleague['team'] %} ({{ colleague['team'] }}){% endif %}
+          </option>
+        {% endfor %}
+        {% if not colleagues %}<option value="" disabled>Es gibt noch keine anderen Nutzer:innen</option>{% endif %}
+      </select>
+    </div>
+    <div class="field grow">
+      <label for="comment">Hinweis (optional)</label>
+      <input id="comment" name="comment" type="text" placeholder="z. B. Übergabetag vor dem Urlaub">
+    </div>
+    <button type="submit">Eintragen &amp; Vertretung benachrichtigen</button>
+  </form>
+</section>
+
+<div class="columns">
+  <section class="card">
+    <h2>Mein Urlaub</h2>
+    {% if my_vacations %}
+      <table>
+        <thead>
+          <tr><th>Von</th><th>Bis</th><th>Vertretung</th><th>Hinweis</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for v in my_vacations %}
+          <tr>
+            <td>{{ v['date_from']|datum }}</td>
+            <td>{{ v['date_to']|datum }}</td>
+            <td>{{ v['substitute_name'] }}</td>
+            <td>{{ v['comment'] or '–' }}</td>
+            <td class="row-actions">
+              <form method="post" action="{{ url_for('vacation_delete', vacation_id=v['id']) }}">
+                <button class="link danger" type="submit" title="Eintrag löschen">Löschen</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="hint">Noch kein Urlaub eingetragen.</p>
+    {% endif %}
+  </section>
+
+  <section class="card">
+    <h2>Vertretung für andere</h2>
+    {% if covering %}
+      <table>
+        <thead>
+          <tr><th>Von</th><th>Bis</th><th>Für wen</th><th>Team</th></tr>
+        </thead>
+        <tbody>
+          {% for v in covering %}
+          <tr>
+            <td>{{ v['date_from']|datum }}</td>
+            <td>{{ v['date_to']|datum }}</td>
+            <td>{{ v['vacationer_name'] }}</td>
+            <td>{{ v['vacationer_team'] or '–' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="hint">Du vertrittst aktuell niemanden.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}
