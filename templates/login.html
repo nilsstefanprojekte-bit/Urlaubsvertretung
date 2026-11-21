@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Anmelden · Urlaubsplanung{% endblock %}
+{% block content %}
+<div class="card auth-card">
+  <h1>Anmelden</h1>
+  <p class="hint">Wer bist du? Melde dich mit deiner E-Mail-Adresse an.</p>
+  <form method="post">
+    <label for="email">E-Mail</label>
+    <input id="email" name="email" type="email" required autofocus>
+    <label for="password">Passwort</label>
+    <input id="password" name="password" type="password" required>
+    <button type="submit">Anmelden</button>
+  </form>
+  <p class="hint">Noch kein Konto? <a href="{{ url_for('register') }}">Jetzt registrieren</a></p>
+</div>
+{% endblock %}
